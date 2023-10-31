@@ -1,7 +1,31 @@
 <script lang="ts">
-  import { ethers } from "ethers";
+  import { Wallet, ethers } from "ethers";
+  import { entropyToMnemonic, randomBytes } from "ethers/lib/utils";
 
   let seedphrase = [];
+  let easyToRecover = false;
+
+  function createEntropyArray(size: number, entropy: number): Uint8Array {
+    if (entropy > 32) {
+      console.log("lol good luck keyboard cowboy");
+    }
+    const maxValue = Math.pow(2, entropy) - 1;
+    return new Uint8Array(size).map(() =>
+      Math.floor(Math.random() * (maxValue + 1))
+    );
+  }
+
+  function createRandom() {
+    let entropy: Uint8Array;
+    if (easyToRecover) {
+      entropy = createEntropyArray(16, 2);
+    } else {
+      entropy = randomBytes(16);
+    }
+    console.log(entropy);
+    const mnemonic = entropyToMnemonic(entropy);
+    return Wallet.fromMnemonic(mnemonic);
+  }
 
   function play(words: string[]) {
     const w = words.shift();
@@ -16,7 +40,7 @@
   }
 
   function onClick() {
-    const w = ethers.Wallet.createRandom();
+    const w = createRandom();
     seedphrase = [];
     play(w.mnemonic.phrase.split(" "));
   }
@@ -25,8 +49,13 @@
 <main>
   <section>
     <h1>Enthusiastic Seedphrase</h1>
-    <p>TikTok approved</p>
-    <button on:click={onClick}>Tell me a seedphrase</button>
+    <label>
+      <input type="checkbox" bind:checked={easyToRecover} />
+      Easy to recover
+    </label>
+    <br />
+    <br />
+    <button on:click={onClick}>Generate my seedphrase</button>
     {#if seedphrase.length}
       <ol>
         {#each seedphrase as word}
