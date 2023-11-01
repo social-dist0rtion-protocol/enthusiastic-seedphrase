@@ -3,7 +3,7 @@
   import { entropyToMnemonic, randomBytes } from "ethers/lib/utils";
 
   let seedphrase = [];
-  let easyToRecover = false;
+  let easyToRecover = true;
 
   function createEntropyArray(size: number, entropy: number): Uint8Array {
     if (entropy > 32) {
@@ -18,7 +18,7 @@
   function createRandom() {
     let entropy: Uint8Array;
     if (easyToRecover) {
-      entropy = createEntropyArray(16, 2);
+      entropy = createEntropyArray(16, 16);
     } else {
       entropy = randomBytes(16);
     }
@@ -48,14 +48,14 @@
 
 <main>
   <section>
-    <h1>Enthusiastic Seedphrase</h1>
+    <h1>🤩 Enthusiastic Seedphrase 🤩</h1>
     <label>
       <input type="checkbox" bind:checked={easyToRecover} />
-      Easy to recover
+      Pro feature: Easy to recover 😍 <br /> say 🙅 to too many bits*
     </label>
     <br />
     <br />
-    <button on:click={onClick}>Generate my seedphrase</button>
+    <button on:click={onClick}>Seedphrase so good 👅</button>
     {#if seedphrase.length}
       <ol>
         {#each seedphrase as word}
@@ -66,6 +66,7 @@
       </ol>
     {/if}
   </section>
+  <p>*don't waste entropy, ♻️ it!</p>
 </main>
 
 <style>
